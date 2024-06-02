@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Metrics Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #77aaff 3px solid;
+        }
+        header h1 {
+            text-align: center;
+            margin: 0;
+            font-size: 2rem;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        form input, form button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Training Metrics Tracker</h1>
+        </div>
+    </header>
+    <div class="container">
+        <form id="metricsForm">
+            <input type="date" id="date" required>
+            <input type="number" id="weight" placeholder="Weight (kg)" required>
+            <input type="number" id="duration" placeholder="Training Duration (minutes)" required>
+            <button type="submit">Add Metrics</button>
+        </form>
+        <table id="metricsTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Weight (kg)</th>
+                    <th>Training Duration (minutes)</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.getElementById('metricsForm').addEventListener('submit', addMetrics);
+
+        function addMetrics(e) {
+            e.preventDefault();
+            
+            const date = document.getElementById('date').value;
+            const weight = document.getElementById('weight').value;
+            const duration = document.getElementById('duration').value;
+
+            const metrics = {
+                date,
+                weight,
+                duration
+            };
+
+            let metricsArray;
+            if(localStorage.getItem('metricsArray') === null) {
+                metricsArray = [];
+            } else {
+                metricsArray = JSON.parse(localStorage.getItem('metricsArray'));
+            }
+
+            metricsArray.push(metrics);
+            localStorage.setItem('metricsArray', JSON.stringify(metricsArray));
+
+            document.getElementById('metricsForm').reset();
+
+            displayMetrics();
+        }
+
+        function displayMetrics() {
+            let metricsArray;
+            if(localStorage.getItem('metricsArray') === null) {
+                metricsArray = [];
+            } else {
+                metricsArray = JSON.parse(localStorage.getItem('metricsArray'));
+            }
+
+            const metricsTable = document.getElementById('metricsTable').getElementsByTagName('tbody')[0];
+            metricsTable.innerHTML = '';
+
+            metricsArray.forEach(metric => {
+                let row = metricsTable.insertRow();
+                let cell1 = row.insertCell(0);
+                let cell2 = row.insertCell(1);
+                let cell3 = row.insertCell(2);
+
+                cell1.innerHTML = metric.date;
+                cell2.innerHTML = metric.weight;
+                cell3.innerHTML = metric.duration;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', displayMetrics);
+    </script>
+</body>
+</html>
